@@ -25,7 +25,7 @@ These must be provided before implementation can proceed. Work through them befo
 | Phase | Name | Status | Detail |
 |---|---|---|---|
 | 1 | Infrastructure & Foundation | 🔄 Code complete — deploy pending .env (UI-01, UI-02, UI-03, UI-11) | [phases/phase_1.md](phases/phase_1.md) |
-| 2 | Backend API Core | ☐ Not started | [phases/phase_2.md](phases/phase_2.md) |
+| 2 | Backend API Core | 🔄 Code complete — deploy pending .env (UI-01, UI-02 for Cognito; runs fully in dev without credentials) | [phases/phase_2.md](phases/phase_2.md) |
 | 3 | IMS Case Management APIs | ☐ Not started | [phases/phase_3.md](phases/phase_3.md) |
 | 4 | IMS Frontend — Case Management | ☐ Not started | [phases/phase_4.md](phases/phase_4.md) |
 | 5 | Data Pipeline (ETL) | ☐ Not started | [phases/phase_5.md](phases/phase_5.md) |

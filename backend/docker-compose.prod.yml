@@ -1,0 +1,41 @@
+# docker-compose.prod.yml — production (EC2 + Nginx)
+# Assumes env vars are exported via systemd unit file from Secrets Manager.
+#
+# Usage (on EC2):
+#   docker compose -f docker-compose.prod.yml up -d
+
+version: "3.9"
+
+services:
+  api:
+    image: ${ECR_IMAGE:-one-system-api:latest}
+    container_name: one_system_api
+    restart: always
+    environment:
+      ENVIRONMENT: production
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-one_system}
+      DB_USER: ${DB_USER:-postgres}
+      # DB_PASSWORD is left empty; the app fetches it from Secrets Manager
+      AWS_REGION: ${AWS_REGION:-ap-southeast-7}
+      COGNITO_USER_POOL_ID: ${COGNITO_USER_POOL_ID}
+      COGNITO_APP_CLIENT_ID: ${COGNITO_APP_CLIENT_ID}
+      S3_ATTACHMENTS_BUCKET: ${S3_ATTACHMENTS_BUCKET}
+      S3_EXPORTS_BUCKET: ${S3_EXPORTS_BUCKET}
+      S3_AUDIT_BUCKET: ${S3_AUDIT_LOGS_BUCKET}
+      SQS_NOTIFICATION_QUEUE_URL: ${SQS_NOTIFICATION_QUEUE_URL}
+      SQS_EXPORT_QUEUE_URL: ${SQS_EXPORT_QUEUE_URL}
+    expose:
+      - "8000"
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: one_system_nginx
+    restart: always
+    depends_on:
+      - api
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro

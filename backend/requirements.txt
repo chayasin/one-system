@@ -1,0 +1,32 @@
+# Web framework
+fastapi==0.115.6
+uvicorn[standard]==0.32.1
+
+# Database (async)
+sqlalchemy[asyncio]==2.0.36
+asyncpg==0.30.0
+psycopg2-binary==2.9.10  # sync driver for Alembic
+
+# Migrations
+alembic==1.14.0
+
+# Config & validation
+pydantic==2.10.3
+pydantic-settings==2.7.0
+pydantic[email]==2.10.3
+python-dotenv==1.0.1
+
+# Auth / JWT
+python-jose[cryptography]==3.3.0
+httpx==0.28.1  # async JWKS fetch
+
+# AWS SDK
+boto3==1.35.98
+
+# Caching
+cachetools==5.5.0
+
+# Testing
+pytest==8.3.4
+pytest-asyncio==0.24.0
+httpx==0.28.1  # async test client (also used above)

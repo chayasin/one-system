@@ -1,0 +1,61 @@
+# docker-compose.yml — local development
+# Starts the FastAPI app + a local PostgreSQL 15 instance.
+#
+# Usage:
+#   docker compose up --build
+#
+# After first start, run migrations:
+#   ENVIRONMENT=development alembic upgrade head
+#   (from the repo root, with the migrations/ directory)
+
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: one_system_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: one_system_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: localpassword
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d one_system_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: one_system_api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ENVIRONMENT: development
+      LOCAL_DB_HOST: db
+      LOCAL_DB_PORT: 5432
+      LOCAL_DB_NAME: one_system_dev
+      LOCAL_DB_USER: postgres
+      LOCAL_DB_PASSWORD: localpassword
+      DEV_SKIP_AUTH: "true"
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount source for hot reload in development
+      - ./app:/app/app
+    command: >
+      uvicorn app.main:app
+        --host 0.0.0.0
+        --port 8000
+        --reload
+
+volumes:
+  postgres_data:
